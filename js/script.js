@@ -1,8 +1,6 @@
 
 let isSave = true;
 
-let debugMode = false;
-
 let beginMSec = 0;
 
 let backMSec = 0;
@@ -22,6 +20,7 @@ window.onload = () => {
         },
         10000
     );
+
     setInterval(
         () => {
             updateGame();
@@ -43,10 +42,8 @@ function updateElement() {
     );
     document.getElementById("add").innerHTML = `+${add}p/sec`;
 
-    if (debugMode) {
-        document.getElementById("point").innerHTML += ` ( raw: ${point}p )`;
-        document.getElementById("add").innerHTML += `[${town.length}:${town}]`;
-    }
+    document.getElementById("rawPoint").innerHTML = point;
+    document.getElementById("rawTown").innerHTML = `${town.length}[${town}]`;
 }
 
 function loadGameData() {
@@ -59,13 +56,13 @@ function loadGameData() {
         backMSec = loadData.backMSec ?? new Date().getTime();
         point = loadData.point ?? 0;
         town = loadData.town ?? [];
+
+        document.getElementById("rawData").innerHTML = loadTxtData;
     }
     else {
         beginMSec = backMSec = new Date().getTime();
         point = 0;
     }
-
-    document.getElementById("data").innerHTML = loadTxtData;
 
     updateElement();
 }
@@ -80,7 +77,7 @@ function saveGameData() {
     const saveTxtData = JSON.stringify(saveData);
     localStorage.setItem("game", saveTxtData);
 
-    document.getElementById("data").innerHTML = saveTxtData;
+    document.getElementById("rawData").innerHTML = saveTxtData;
 
     updateElement();
 }
@@ -141,5 +138,5 @@ function toStringDate(date) {
     const hour = date.getHours();
     const minute = date.getMinutes();
     const second = date.getSeconds();
-    return `${year} /${month}/${day} ${hour}: ${minute}: ${second} `;
+    return `${year}/${month}/${day} ${hour}: ${minute}: ${second} `;
 }

@@ -12,10 +12,6 @@
 
 <body>
     <p>
-        Local Strage - game :
-        <span id="data"></span>
-    </p>
-    <p>
         Begin Time :
         <span id="beginTime"></span>
     </p>
@@ -30,19 +26,6 @@
     </p>
 
     <form>
-        Point+
-        <input type="button" value="+100p" onclick="addPoint(100*1000);" />
-        <input type="button" value="+1000p" onclick="addPoint(1000*1000);" />
-        <input type="button" value="+10000p" onclick="addPoint(10000*1000);" />
-    </form>
-    <form>
-        Point-
-        <input type="button" value="-100p" onclick="addPoint(-100*1000);" />
-        <input type="button" value="-1000p" onclick="addPoint(-1000*1000);" />
-        <input type="button" value="-10000p" onclick="addPoint(-10000*1000);" />
-    </form>
-
-    <form>
         town
         <input type="button" value="buy:10p +1p/sec" onclick="addTown(10, 1);" />
         <input type="button" value="buy:100p +10p/sec" onclick="addTown(100, 10);" />
@@ -53,8 +36,47 @@
     <form>
         <input type="button" value="save" onclick="updateGame(); saveGameData();" />
         <input type="button" value="reset" onclick="resetGameData();" />
-        <input type="button" value="debugMode" onclick="debugMode ^= true;" />
     </form>
+
+    <details>
+        <summary>Debug</summary>
+
+        <p>
+            Raw Local Strage :
+            <span id="rawData"></span>
+        </p>
+
+        <p>
+            Raw Point :
+            <span id="rawPoint"></span>
+        </p>
+
+        <p>
+            Raw Town :
+            <span id="rawTown"></span>
+        </p>
+
+        <form>
+            Point+
+            <input type="button" value="+100p" onclick="addPoint(100*1000);" />
+            <input type="button" value="+1000p" onclick="addPoint(1000*1000);" />
+            <input type="button" value="+10000p" onclick="addPoint(10000*1000);" />
+        </form>
+
+        <form>
+            Point-
+            <input type="button" value="-100p" onclick="addPoint(-100*1000);" />
+            <input type="button" value="-1000p" onclick="addPoint(-1000*1000);" />
+            <input type="button" value="-10000p" onclick="addPoint(-10000*1000);" />
+        </form>
+
+        <form>
+            Point+
+            <input type="button" value="+100p/sec" onclick="addTown(0, 100);" />
+            <input type="button" value="+1000p/sec" onclick="addTown(0, 1000);" />
+            <input type="button" value="+10000p/sec" onclick="addTown(0, 10000);" />
+        </form>
+    </details>
 </body>
 
 </html>
