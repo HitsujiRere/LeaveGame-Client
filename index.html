@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="text/javascript" src="./js/script.js" charset="utf-8"></script>
+
+    <title>Document</title>
+</head>
+
+<body>
+    <p>
+        Local Strage - game :
+        <span id="data"></span>
+    </p>
+    <p>
+        Begin Time :
+        <span id="beginTime"></span>
+    </p>
+    <p>
+        Back Time :
+        <span id="backTime"></span>
+    </p>
+    <p>
+        Point :
+        <span id="point"></span>
+        <span id="add"></span>
+    </p>
+
+    <form>
+        Point+
+        <input type="button" value="+100p" onclick="addPoint(100*1000);" />
+        <input type="button" value="+1000p" onclick="addPoint(1000*1000);" />
+        <input type="button" value="+10000p" onclick="addPoint(10000*1000);" />
+    </form>
+    <form>
+        Point-
+        <input type="button" value="-100p" onclick="addPoint(-100*1000);" />
+        <input type="button" value="-1000p" onclick="addPoint(-1000*1000);" />
+        <input type="button" value="-10000p" onclick="addPoint(-10000*1000);" />
+    </form>
+
+    <form>
+        town
+        <input type="button" value="buy:10p +1p/sec" onclick="addTown(10, 1);" />
+        <input type="button" value="buy:100p +10p/sec" onclick="addTown(100, 10);" />
+        <input type="button" value="buy:1000p +100p/sec" onclick="addTown(1000, 100);" />
+        <input type="button" value="buy:10000p +1000p/sec" onclick="addTown(10000, 1000);" />
+    </form>
+
+    <form>
+        <input type="button" value="save" onclick="updateGame(); saveGameData();" />
+        <input type="button" value="reset" onclick="resetGameData();" />
+        <input type="button" value="debugMode" onclick="debugMode ^= true;" />
+    </form>
+</body>
+
+</html>
