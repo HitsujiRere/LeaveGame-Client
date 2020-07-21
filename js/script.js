@@ -58,6 +58,7 @@ function loadGameData() {
         beginMSec = loadData.beginMSec ?? new Date().getTime();
         backMSec = loadData.backMSec ?? new Date().getTime();
         point = loadData.point ?? 0;
+        town = loadData.town ?? [];
     }
     else {
         beginMSec = backMSec = new Date().getTime();
@@ -74,6 +75,7 @@ function saveGameData() {
         beginMSec: beginMSec,
         backMSec: backMSec,
         point: point,
+        town: town,
     };
     const saveTxtData = JSON.stringify(saveData);
     localStorage.setItem("game", saveTxtData);
