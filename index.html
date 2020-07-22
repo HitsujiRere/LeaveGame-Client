@@ -9,23 +9,18 @@
 
     <script type="text/javascript" src="./js/script.js" charset="utf-8"></script>
 
-    <title>Document</title>
+    <title>Leave Game</title>
 </head>
 
 <body>
+
+    <h1>放置ゲーム</h1>
+
     <form>
         Name :
         <input type="text" id="playerNameInput" oninput="playerName = this.value;" />
     </form>
 
-    <p>
-        Begin Time :
-        <span id="beginTime"></span>
-    </p>
-    <p>
-        Back Time :
-        <span id="backTime"></span>
-    </p>
     <p>
         Point :
         <span id="point"></span>
@@ -35,10 +30,21 @@
     <form>
         Town :
         <ul>
-            <li><input type="button" value="buy:10p +1p/sec" onclick="addTown(10, 1);" /></li>
-            <li><input type="button" value="buy:100p +10p/sec" onclick="addTown(100, 10);" /></li>
-            <li><input type="button" value="buy:1000p +100p/sec" onclick="addTown(1000, 100);" /></li>
-            <li><input type="button" value="buy:10000p +1000p/sec" onclick="addTown(10000, 1000);" /></li>
+            <li>
+                <input type="button" value="buy" onclick="addTown(10, 0.1);" />
+                <input type="button" value="all buy" onclick="addAllTown(10, 0.1);" />
+                cost:10p, every:+0.1p/sec
+            </li>
+            <li>
+                <input type="button" value="buy" onclick="addTown(100, 1);" />
+                <input type="button" value="all buy" onclick="addAllTown(100, 1);" />
+                cost:100p, every:+1p/sec
+            </li>
+            <li>
+                <input type="button" value="buy" onclick="addTown(1000, 10);" />
+                <input type="button" value="all buy" onclick="addAllTown(1000, 10);" />
+                cost:1000p, every:+10p/sec
+            </li>
         </ul>
     </form>
 
@@ -58,6 +64,15 @@
         <p>
             Raw Local Strage :
             <span id="rawData"></span>
+        </p>
+
+        <p>
+            Begin Time :
+            <span id="beginTime"></span>
+        </p>
+        <p>
+            Back Time :
+            <span id="backTime"></span>
         </p>
 
         <p>

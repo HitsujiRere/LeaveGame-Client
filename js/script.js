@@ -7,13 +7,24 @@ let backMSec = 0;
 
 let point = 0;
 
-let town = [];
+const pointRevision = 1000;
+
+let town = [pointRevision];
 
 let playerName = "";
 
+//const charactors = [];
+
 window.onload = () => {
+    //loadCharactors("./data/charactors.json");
     loadGameData();
 
+    setInterval(
+        () => {
+            updateGame();
+        },
+        1000
+    );
     setInterval(
         () => {
             if (isSave) {
@@ -22,28 +33,58 @@ window.onload = () => {
         },
         10000
     );
-
-    setInterval(
-        () => {
-            updateGame();
-        },
-        1000
-    );
 };
 
-function updateElement() {
-    document.getElementById("beginTime").innerHTML = toStringDate(new Date(beginMSec));
-    document.getElementById("backTime").innerHTML = toStringDate(new Date(backMSec));
-    document.getElementById("point").innerHTML = `${point / 1000}p`;
+/*
+class Charactor {
+    constructor() {
+        this.id = -1;
+        this.name = "no-name";
+        this.comment = "no-comment";
+    }
 
-    let add = 1;
+    static parse(obj) {
+        const charactor = new Charactor();
+        charactor.id = obj.id ?? -1;
+        charactor.name = obj.name ?? "no-name";
+        charactor.comment = obj.comment ?? "no-comment";
+        return charactor;
+    }
+}
+
+function loadCharactors(filePath) {
+    const req = new XMLHttpRequest();
+
+    const charactorsJSONTxt = "";
+    req.open("get", filePath, false);
+    req.onload = function () {
+        charactorsJSONTxt = req.responseText;
+    }
+    req.send(null);
+
+    const charactorsJSON = JSON.parse(charactorsJSONTxt);
+    console.log(charactorsJSON);
+    for (const charactorJSON of charactorsJSON) {
+        const charactor = Charactor.parse(charactorJSON);
+        charactors.push(charactor);
+    }
+    console.log(charactors);
+}
+*/
+
+function updateElement() {
+    document.getElementById("point").innerHTML = `${Math.floor(point / pointRevision * 10) / 10}p`;
+
+    let add = 0;
     town.forEach(
         (val) => {
             add += (val * 1);
         }
     );
-    document.getElementById("add").innerHTML = `+${add}p/sec`;
+    document.getElementById("add").innerHTML = `+${Math.floor(add / pointRevision * 10) / 10}p/sec`;
 
+    document.getElementById("beginTime").innerHTML = toStringDate(new Date(beginMSec));
+    document.getElementById("backTime").innerHTML = toStringDate(new Date(backMSec));
     document.getElementById("rawPoint").innerHTML = point;
     document.getElementById("rawTown").innerHTML = `${town.length}[${town}]`;
     document.getElementById("playerNameTest").innerHTML = playerName;
@@ -103,11 +144,18 @@ function addPoint(add) {
 }
 
 function addTown(cost, add) {
-    cost *= 1000;
+    cost *= pointRevision;
+    add *= pointRevision;
     if (point >= cost) {
         addPoint(-cost);
         town.push(add);
+        return true;
     }
+    return false;
+}
+
+function addAllTown(cost, add) {
+    while (addTown(cost, add)) { }
 }
 
 function updateGame() {
@@ -118,11 +166,9 @@ function updateGame() {
         return;
     }
 
-    point += diffMSec;
-
     town.forEach(
         (val) => {
-            addPoint(val * diffMSec);
+            addPoint(val * diffMSec / pointRevision);
         }
     );
 
@@ -135,6 +181,7 @@ function resetGameData() {
     console.log("reset");
     beginMSec = backMSec = new Date().getTime();
     point = 0;
+    town = [pointRevision];
 
     updateElement();
 }
