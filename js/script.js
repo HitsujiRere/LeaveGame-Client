@@ -13,11 +13,13 @@ let town = [pointRevision];
 
 let playerName = "";
 
-//const charactors = [];
+const charactors = [];
 
 window.onload = () => {
-    //loadCharactors("./data/charactors.json");
+    loadCharactors("./data/charactors.json");
     loadGameData();
+    makeButtons();
+    updateGame();
 
     setInterval(
         () => {
@@ -35,12 +37,13 @@ window.onload = () => {
     );
 };
 
-/*
 class Charactor {
     constructor() {
         this.id = -1;
         this.name = "no-name";
         this.comment = "no-comment";
+        this.cost = 0;
+        this.get = 0;
     }
 
     static parse(obj) {
@@ -48,6 +51,8 @@ class Charactor {
         charactor.id = obj.id ?? -1;
         charactor.name = obj.name ?? "no-name";
         charactor.comment = obj.comment ?? "no-comment";
+        charactor.cost = obj.cost ?? 0;
+        charactor.get = obj.get ?? 0;
         return charactor;
     }
 }
@@ -55,22 +60,56 @@ class Charactor {
 function loadCharactors(filePath) {
     const req = new XMLHttpRequest();
 
-    const charactorsJSONTxt = "";
     req.open("get", filePath, false);
-    req.onload = function () {
-        charactorsJSONTxt = req.responseText;
+    req.onload = () => {
+        const charactorsJSONTxt = req.responseText;
+        const charactorsJSON = JSON.parse(charactorsJSONTxt);
+        for (const charactorJSON of charactorsJSON) {
+            const charactor = Charactor.parse(charactorJSON);
+            charactors.push(charactor);
+        }
     }
     req.send(null);
-
-    const charactorsJSON = JSON.parse(charactorsJSONTxt);
-    console.log(charactorsJSON);
-    for (const charactorJSON of charactorsJSON) {
-        const charactor = Charactor.parse(charactorJSON);
-        charactors.push(charactor);
-    }
-    console.log(charactors);
 }
-*/
+
+function makeButtons() {
+    const townEl = document.getElementById("Town");
+    for (const chara of charactors) {
+        const charaEl = document.createElement("li");
+        charaEl.setAttribute("id", `Town_${chara.id}`);
+        townEl.appendChild(charaEl);
+
+        const charaNameEl = document.createElement("span");
+        charaNameEl.setAttribute("id", `Town_${chara.id}_name`);
+        charaEl.appendChild(charaNameEl);
+        const charaNameNode = document.createTextNode(`${chara.name} `);
+        charaNameEl.appendChild(charaNameNode);
+
+        const charaCostEl = document.createElement("span");
+        charaCostEl.setAttribute("id", `Town_${chara.id}_cost`);
+        charaEl.appendChild(charaCostEl);
+        const charaCostNode = document.createTextNode(`buy:${chara.cost}p `);
+        charaCostEl.appendChild(charaCostNode);
+
+        const charaGetEl = document.createElement("span");
+        charaGetEl.setAttribute("id", `Town_${chara.id}_get`);
+        charaEl.appendChild(charaGetEl);
+        const charaGetNode = document.createTextNode(`every:${chara.get}p/sec `);
+        charaGetEl.appendChild(charaGetNode);
+
+        const charaBuyButton = document.createElement("input");
+        charaBuyButton.setAttribute("type", "button");
+        charaBuyButton.setAttribute("value", "buy");
+        charaBuyButton.setAttribute("onclick", `addTown(${chara.cost}, ${chara.get});`);
+        charaEl.appendChild(charaBuyButton);
+
+        const charaAllBuyButton = document.createElement("input");
+        charaAllBuyButton.setAttribute("type", "button");
+        charaAllBuyButton.setAttribute("value", "all buy");
+        charaAllBuyButton.setAttribute("onclick", `addAllTown(${chara.cost}, ${chara.get});`);
+        charaEl.appendChild(charaAllBuyButton);
+    }
+}
 
 function updateElement() {
     document.getElementById("point").innerHTML = `${Math.floor(point / pointRevision * 10) / 10}p`;
@@ -131,14 +170,31 @@ function saveGameData() {
     updateElement();
 }
 
-function addPoint(add) {
+function addPoint(add, update = true) {
+    add *= pointRevision;
     point += add;
 
     if (point < 0) {
         point = 0;
     }
 
-    updateElement();
+    if (update) {
+        updateElement();
+    }
+
+    return point;
+}
+
+function addRawPoint(add, update = true) {
+    point += add;
+
+    if (point < 0) {
+        point = 0;
+    }
+
+    if (update) {
+        updateElement();
+    }
 
     return point;
 }
@@ -147,7 +203,7 @@ function addTown(cost, add) {
     cost *= pointRevision;
     add *= pointRevision;
     if (point >= cost) {
-        addPoint(-cost);
+        addRawPoint(-cost);
         town.push(add);
         return true;
     }
@@ -168,7 +224,7 @@ function updateGame() {
 
     town.forEach(
         (val) => {
-            addPoint(val * diffMSec / pointRevision);
+            addRawPoint(val * diffMSec / pointRevision, false);
         }
     );
 

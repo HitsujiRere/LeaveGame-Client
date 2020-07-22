@@ -29,22 +29,7 @@
 
     <form>
         Town :
-        <ul>
-            <li>
-                <input type="button" value="buy" onclick="addTown(10, 0.1);" />
-                <input type="button" value="all buy" onclick="addAllTown(10, 0.1);" />
-                cost:10p, every:+0.1p/sec
-            </li>
-            <li>
-                <input type="button" value="buy" onclick="addTown(100, 1);" />
-                <input type="button" value="all buy" onclick="addAllTown(100, 1);" />
-                cost:100p, every:+1p/sec
-            </li>
-            <li>
-                <input type="button" value="buy" onclick="addTown(1000, 10);" />
-                <input type="button" value="all buy" onclick="addAllTown(1000, 10);" />
-                cost:1000p, every:+10p/sec
-            </li>
+        <ul id="Town">
         </ul>
     </form>
 
@@ -87,16 +72,16 @@
 
         <form>
             Point+
-            <input type="button" value="+100p" onclick="addPoint(100*1000);" />
-            <input type="button" value="+1000p" onclick="addPoint(1000*1000);" />
-            <input type="button" value="+10000p" onclick="addPoint(10000*1000);" />
+            <input type="button" value="+100p" onclick="addPoint(100);" />
+            <input type="button" value="+1000p" onclick="addPoint(1000);" />
+            <input type="button" value="+10000p" onclick="addPoint(10000);" />
         </form>
 
         <form>
             Point-
-            <input type="button" value="-100p" onclick="addPoint(-100*1000);" />
-            <input type="button" value="-1000p" onclick="addPoint(-1000*1000);" />
-            <input type="button" value="-10000p" onclick="addPoint(-10000*1000);" />
+            <input type="button" value="-100p" onclick="addPoint(-100);" />
+            <input type="button" value="-1000p" onclick="addPoint(-1000);" />
+            <input type="button" value="-10000p" onclick="addPoint(-10000);" />
         </form>
 
         <form>
