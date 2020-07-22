@@ -5,12 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="./css/style.css">
+
     <script type="text/javascript" src="./js/script.js" charset="utf-8"></script>
 
     <title>Document</title>
 </head>
 
 <body>
+    <form>
+        Name :
+        <input type="text" id="playerNameInput" oninput="playerName = this.value;" />
+    </form>
+
     <p>
         Begin Time :
         <span id="beginTime"></span>
@@ -26,11 +33,13 @@
     </p>
 
     <form>
-        town
-        <input type="button" value="buy:10p +1p/sec" onclick="addTown(10, 1);" />
-        <input type="button" value="buy:100p +10p/sec" onclick="addTown(100, 10);" />
-        <input type="button" value="buy:1000p +100p/sec" onclick="addTown(1000, 100);" />
-        <input type="button" value="buy:10000p +1000p/sec" onclick="addTown(10000, 1000);" />
+        Town :
+        <ul>
+            <li><input type="button" value="buy:10p +1p/sec" onclick="addTown(10, 1);" /></li>
+            <li><input type="button" value="buy:100p +10p/sec" onclick="addTown(100, 10);" /></li>
+            <li><input type="button" value="buy:1000p +100p/sec" onclick="addTown(1000, 100);" /></li>
+            <li><input type="button" value="buy:10000p +1000p/sec" onclick="addTown(10000, 1000);" /></li>
+        </ul>
     </form>
 
     <form>
@@ -40,6 +49,11 @@
 
     <details>
         <summary>Debug</summary>
+
+        <p>
+            Player Name :
+            <span id="playerNameTest"></span>
+        </p>
 
         <p>
             Raw Local Strage :

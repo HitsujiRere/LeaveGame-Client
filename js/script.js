@@ -9,6 +9,8 @@ let point = 0;
 
 let town = [];
 
+let playerName = "";
+
 window.onload = () => {
     loadGameData();
 
@@ -44,10 +46,13 @@ function updateElement() {
 
     document.getElementById("rawPoint").innerHTML = point;
     document.getElementById("rawTown").innerHTML = `${town.length}[${town}]`;
+    document.getElementById("playerNameTest").innerHTML = playerName;
 }
 
 function loadGameData() {
     const loadTxtData = localStorage.getItem("game");
+
+    console.log(loadTxtData);
 
     if (loadTxtData) {
         const loadData = JSON.parse(loadTxtData);
@@ -56,12 +61,14 @@ function loadGameData() {
         backMSec = loadData.backMSec ?? new Date().getTime();
         point = loadData.point ?? 0;
         town = loadData.town ?? [];
+        playerName = loadData.name ?? "";
 
         document.getElementById("rawData").innerHTML = loadTxtData;
+
+        document.getElementById("playerNameInput").value = playerName;
     }
     else {
         beginMSec = backMSec = new Date().getTime();
-        point = 0;
     }
 
     updateElement();
@@ -73,6 +80,7 @@ function saveGameData() {
         backMSec: backMSec,
         point: point,
         town: town,
+        name: playerName,
     };
     const saveTxtData = JSON.stringify(saveData);
     localStorage.setItem("game", saveTxtData);
@@ -138,5 +146,6 @@ function toStringDate(date) {
     const hour = date.getHours();
     const minute = date.getMinutes();
     const second = date.getSeconds();
-    return `${year}/${month}/${day} ${hour}: ${minute}: ${second} `;
+    //const millisecond = date.getMilliseconds();
+    return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 }
