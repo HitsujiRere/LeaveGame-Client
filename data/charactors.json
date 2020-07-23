@@ -1,5 +1,12 @@
 [
     {
+        "id": -1,
+        "name": "First",
+        "comment": "",
+        "cost": 0,
+        "get": 1
+    },
+    {
         "id": 0,
         "name": "かめさん",
         "comment": "もしもし　かめよ　かめさんよ．",

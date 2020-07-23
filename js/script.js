@@ -1,5 +1,5 @@
 
-let isSave = true;
+let isSave = false;
 
 let beginMSec = 0;
 
@@ -9,16 +9,19 @@ let point = 0;
 
 const pointRevision = 1000;
 
-let town = [pointRevision];
+let town = new Map();
 
 let playerName = "";
 
-const charactors = [];
+const charactors = new Map();
 
 window.onload = () => {
     loadCharactors("./data/charactors.json");
-    loadGameData();
+
     makeButtons();
+
+    loadGameData();
+
     updateGame();
 
     setInterval(
@@ -66,7 +69,7 @@ function loadCharactors(filePath) {
         const charactorsJSON = JSON.parse(charactorsJSONTxt);
         for (const charactorJSON of charactorsJSON) {
             const charactor = Charactor.parse(charactorJSON);
-            charactors.push(charactor);
+            charactors.set(charactor.id, charactor);
         }
     }
     req.send(null);
@@ -74,65 +77,80 @@ function loadCharactors(filePath) {
 
 function makeButtons() {
     const townEl = document.getElementById("Town");
-    for (const chara of charactors) {
+    for (const [id, chara] of charactors) {
         const charaEl = document.createElement("li");
-        charaEl.setAttribute("id", `Town_${chara.id}`);
+        charaEl.setAttribute("id", `Town_${id}`);
         townEl.appendChild(charaEl);
 
         const charaNameEl = document.createElement("span");
-        charaNameEl.setAttribute("id", `Town_${chara.id}_name`);
+        charaNameEl.setAttribute("id", `Town_${id}_name`);
         charaEl.appendChild(charaNameEl);
         const charaNameNode = document.createTextNode(`${chara.name} `);
         charaNameEl.appendChild(charaNameNode);
 
         const charaCostEl = document.createElement("span");
-        charaCostEl.setAttribute("id", `Town_${chara.id}_cost`);
+        charaCostEl.setAttribute("id", `Town_${id}_cost`);
         charaEl.appendChild(charaCostEl);
         const charaCostNode = document.createTextNode(`buy:${chara.cost}p `);
         charaCostEl.appendChild(charaCostNode);
 
         const charaGetEl = document.createElement("span");
-        charaGetEl.setAttribute("id", `Town_${chara.id}_get`);
+        charaGetEl.setAttribute("id", `Town_${id}_get`);
         charaEl.appendChild(charaGetEl);
         const charaGetNode = document.createTextNode(`every:${chara.get}p/sec `);
         charaGetEl.appendChild(charaGetNode);
 
         const charaBuyButton = document.createElement("input");
+        charaBuyButton.setAttribute("id", `Town_${id}_buy`);
         charaBuyButton.setAttribute("type", "button");
         charaBuyButton.setAttribute("value", "buy");
-        charaBuyButton.setAttribute("onclick", `addTown(${chara.cost}, ${chara.get});`);
+        charaBuyButton.setAttribute("onclick", `addTown(${id});`);
         charaEl.appendChild(charaBuyButton);
 
         const charaAllBuyButton = document.createElement("input");
+        charaAllBuyButton.setAttribute("id", `Town_${id}_allbuy`);
         charaAllBuyButton.setAttribute("type", "button");
         charaAllBuyButton.setAttribute("value", "all buy");
-        charaAllBuyButton.setAttribute("onclick", `addAllTown(${chara.cost}, ${chara.get});`);
+        charaAllBuyButton.setAttribute("onclick", `addAllTown(${id});`);
         charaEl.appendChild(charaAllBuyButton);
     }
 }
 
 function updateElement() {
-    document.getElementById("point").innerHTML = `${Math.floor(point / pointRevision * 10) / 10}p`;
+    document.getElementById("point").innerHTML = `${Math.floor(point / pointRevision * 10) / 10} p`;
 
     let add = 0;
     town.forEach(
-        (val) => {
-            add += (val * 1);
+        (val, key, map) => {
+            add += val * charactors.get(key).get;
         }
     );
-    document.getElementById("add").innerHTML = `+${Math.floor(add / pointRevision * 10) / 10}p/sec`;
+    charactors.forEach(
+        (val, key, map) => {
+            const buyBtn = document.getElementById(`Town_${key}_buy`);
+            if (val.cost > point / pointRevision)
+                buyBtn.setAttribute("disabled", true);
+            else
+                buyBtn.removeAttribute("disabled");
+            const allbuyBtn = document.getElementById(`Town_${key}_allbuy`);
+            if (val.cost > point / pointRevision)
+                allbuyBtn.setAttribute("disabled", true);
+            else
+                allbuyBtn.removeAttribute("disabled");
+        }
+    );
+    document.getElementById("add").innerHTML = `+ ${Math.floor(add * 10) / 10} p / sec`;
 
     document.getElementById("beginTime").innerHTML = toStringDate(new Date(beginMSec));
     document.getElementById("backTime").innerHTML = toStringDate(new Date(backMSec));
     document.getElementById("rawPoint").innerHTML = point;
-    document.getElementById("rawTown").innerHTML = `${town.length}[${town}]`;
+    document.getElementById("rawTown").innerHTML =
+        `${town.size}[${Object.keys(toObjectFromMap(town))}=>${Object.values(toObjectFromMap(town))}]`;
     document.getElementById("playerNameTest").innerHTML = playerName;
 }
 
 function loadGameData() {
     const loadTxtData = localStorage.getItem("game");
-
-    console.log(loadTxtData);
 
     if (loadTxtData) {
         const loadData = JSON.parse(loadTxtData);
@@ -140,7 +158,8 @@ function loadGameData() {
         beginMSec = loadData.beginMSec ?? new Date().getTime();
         backMSec = loadData.backMSec ?? new Date().getTime();
         point = loadData.point ?? 0;
-        town = loadData.town ?? [];
+        town = toNumberInMapKeys(toMapFromObject(loadData.town))
+            ?? new Map().set(0, 1);
         playerName = loadData.name ?? "";
 
         document.getElementById("rawData").innerHTML = loadTxtData;
@@ -149,6 +168,7 @@ function loadGameData() {
     }
     else {
         beginMSec = backMSec = new Date().getTime();
+        town.set(-1, 1);
     }
 
     updateElement();
@@ -159,7 +179,7 @@ function saveGameData() {
         beginMSec: beginMSec,
         backMSec: backMSec,
         point: point,
-        town: town,
+        town: toObjectFromMap(town),
         name: playerName,
     };
     const saveTxtData = JSON.stringify(saveData);
@@ -199,19 +219,20 @@ function addRawPoint(add, update = true) {
     return point;
 }
 
-function addTown(cost, add) {
-    cost *= pointRevision;
-    add *= pointRevision;
-    if (point >= cost) {
-        addRawPoint(-cost);
-        town.push(add);
+function addTown(id) {
+    if (point >= charactors.get(id).cost * pointRevision) {
+        addPoint(-charactors.get(id).cost);
+        if (!town.has(id)) {
+            town.set(id, 0);
+        }
+        town.set(id, town.get(id) + 1);
         return true;
     }
     return false;
 }
 
-function addAllTown(cost, add) {
-    while (addTown(cost, add)) { }
+function addAllTown(id) {
+    while (addTown(id)) { }
 }
 
 function updateGame() {
@@ -223,8 +244,8 @@ function updateGame() {
     }
 
     town.forEach(
-        (val) => {
-            addRawPoint(val * diffMSec / pointRevision, false);
+        (val, key, map) => {
+            addPoint(val * charactors.get(key).get * diffMSec / 1000, false);
         }
     );
 
@@ -237,7 +258,8 @@ function resetGameData() {
     console.log("reset");
     beginMSec = backMSec = new Date().getTime();
     point = 0;
-    town = [pointRevision];
+    town = new Map();
+    town.set(-1, 1);
 
     updateElement();
 }
@@ -250,5 +272,33 @@ function toStringDate(date) {
     const minute = date.getMinutes();
     const second = date.getSeconds();
     //const millisecond = date.getMilliseconds();
-    return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
+    return `${year} /${month}/${day} ${hour}: ${minute}: ${second} `;
+}
+
+function toObjectFromMap(map) {
+    const obj = {};
+    map.forEach(
+        (val, key, map) => {
+            obj[key] = val;
+        }
+    );
+    return obj;
+}
+
+function toMapFromObject(obj) {
+    const map = new Map();
+    for (const key of Object.keys(obj)) {
+        map.set(key, obj[key]);
+    }
+    return map;
+}
+
+function toNumberInMapKeys(map) {
+    const map2 = new Map();
+    map.forEach(
+        (val, key, map) => {
+            map2.set(Number(key), val);
+        }
+    );
+    return map2;
 }
